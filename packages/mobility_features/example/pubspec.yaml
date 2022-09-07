@@ -1,7 +1,7 @@
 name: mobility_features_example
 description: An example app for the Mobility Features package.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
-version: 3.1.0
+version: 3.1.1
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
