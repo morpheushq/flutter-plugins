@@ -299,7 +299,8 @@ void main() async {
       /// to the MobilityFactory instance
       StreamController<LocationSample> controller =
           StreamController.broadcast();
-
+      MobilityFeatures().stopDuration = Duration(minutes: 15);
+      MobilityFeatures().stopRadius=50.0;
       // Set up stream
       await MobilityFeatures().startListening(controller.stream);
 
