@@ -112,7 +112,7 @@ class MobilityFeatures {
     if (_cluster.isNotEmpty) {
       // If previous sample was on a different date, reset everything
       if (_cluster.last.datetime.midnight != sample.datetime.midnight) {
-        _createStopAndResetCluster();
+        _createStopAndResetCluster(sample);
         _clearEverything();
       }
 
@@ -123,7 +123,7 @@ class MobilityFeatures {
 
         // If the new data point is far away from cluster, make stop
         if (Distance.fromGeospatial(centroid, sample) > _stopRadius) {
-          _createStopAndResetCluster();
+          _createStopAndResetCluster(sample);
         }
       }
     }
@@ -153,9 +153,9 @@ class MobilityFeatures {
   }
 
   /// Converts the cluster into a stop, i.e. closing the cluster
-  void _createStopAndResetCluster() {
+  void _createStopAndResetCluster(LocationSample sample) {
     Stop s = Stop._fromLocationSamples(_cluster);
-
+    _print('----> _createStopAndResetCluster  sample: $sample');
     // If the stop is too short, it is discarded
     // Otherwise compute a context and send it via the stream
     if (s.duration > _stopDuration) {

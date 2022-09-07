@@ -228,7 +228,7 @@ void main() async {
       for (LocationSample s in samples) {
         controller.add(s);
       }
-      controller.close();
+       controller.close();
     });
 
     test('Stream LocationSamples with path between locations', () async {
