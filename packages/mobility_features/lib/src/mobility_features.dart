@@ -156,12 +156,10 @@ class MobilityFeatures {
   /// Converts the cluster into a stop, i.e. closing the cluster
   void _createStopAndResetCluster(LocationSample sample) {
     Stop s = Stop._fromLocationSamples(_cluster);
+    s =  Stop._(
+        s.geoLocation, s.arrival, sample.datetime,
+        placeId: s.placeId);
 
-    if (Distance.fromGeospatial(s, sample) > _stopRadius) {
-      s =  Stop._(
-          s.geoLocation, s.arrival, sample.datetime,
-          placeId: s.placeId);
-    }
     // If the stop is too short, it is discarded
     // Otherwise compute a context and send it via the stream
 
@@ -171,6 +169,7 @@ class MobilityFeatures {
     if (s.duration > _stopDuration) {
       _print('----> Stop found: $s');
       Stop? stopPrev = _stops.isNotEmpty ? _stops.last : null;
+
 
       _stops.add(s);
 

@@ -115,7 +115,7 @@ List<Stop> _mergeStops(List<Stop> stops, { mergeDuration =const Duration(minutes
       else {
         if (stop.placeId != toMerge.last.placeId) {
              _merge();
-
+             toMerge.add(stop);
         }
         else { //same place
           Duration timeDiff = Duration(
@@ -123,19 +123,20 @@ List<Stop> _mergeStops(List<Stop> stops, { mergeDuration =const Duration(minutes
               stop.arrival.millisecondsSinceEpoch -
                   toMerge.last.departure.millisecondsSinceEpoch);
 
-          if (timeDiff < mergeDuration) {
+          if (timeDiff > mergeDuration) {
+            _merge();
             toMerge.add(stop);
           }
           else{
-            toMerge=[];//becomes start of next batch of merge
+            toMerge.add(stop);
           }
         }
-        toMerge.add(stop);
+
       }
     }
   }
 
   /// Merge remaining stops in the toMerge list
-  _merge();
+    _merge();
   return merged;
 }
