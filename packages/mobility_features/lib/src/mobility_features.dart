@@ -16,6 +16,7 @@ class MobilityFeatures {
   List<LocationSample> _cluster = [], _buffer = [], _samples = [];
   int _saveEvery = 10;
   bool debug = false;
+  bool applyMerge = true;
 
   void _print(dynamic x) {
     if (debug) {
@@ -177,7 +178,9 @@ class MobilityFeatures {
       _places = _findPlaces(_stops);
 
       // Merge stops and recompute places
-      _stops = _mergeStops(_stops,mergeDuration: _smergeDuration);
+      if(applyMerge) {
+        _stops = _mergeStops(_stops, mergeDuration: _smergeDuration);
+      }
       _places = _findPlaces(_stops);
 
       // Store to disk
