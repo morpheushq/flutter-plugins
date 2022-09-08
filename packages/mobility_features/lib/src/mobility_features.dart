@@ -156,7 +156,7 @@ class MobilityFeatures {
   void _createStopAndResetCluster(LocationSample sample) {
     Stop s = Stop._fromLocationSamples(_cluster);
 
-    if (Distance.fromGeospatial(s.geoLocation, sample) > _stopRadius) {
+    if (Distance.fromGeospatial(s, sample) > _stopRadius) {
       s =  Stop._(
           s.geoLocation, s.arrival, sample.datetime,
           placeId: s.placeId);
