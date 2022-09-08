@@ -5,7 +5,7 @@ part of mobility_features;
 class MobilityFeatures {
   double _stopRadius = 5, _placeRadius = 50;
   Duration _stopDuration = const Duration(seconds: 20);
-
+  Duration _smergeDuration = const Duration(seconds: 20);
   StreamSubscription<LocationSample>? _subscription;
   _MobilitySerializer<LocationSample>? _serializerSamples;
   late _MobilitySerializer<Stop> _serializerStops;
@@ -154,13 +154,16 @@ class MobilityFeatures {
 
   /// Converts the cluster into a stop, i.e. closing the cluster
   void _createStopAndResetCluster(LocationSample sample) {
-    Stop s1 = Stop._fromLocationSamples(_cluster);
-    _print('----> _createStopAndResetCluster  sample: $sample');
+    Stop s = Stop._fromLocationSamples(_cluster);
+
+    if (Distance.fromGeospatial(s.geoLocation, sample) > _stopRadius) {
+      s =  Stop._(
+          s.geoLocation, s.arrival, sample.datetime,
+          placeId: s.placeId);
+    }
     // If the stop is too short, it is discarded
     // Otherwise compute a context and send it via the stream
-    Stop s =  Stop._(
-        s1.geoLocation, s1.arrival, sample.datetime,
-        placeId: s1.placeId);
+
 
 
 
@@ -174,7 +177,7 @@ class MobilityFeatures {
       _places = _findPlaces(_stops);
 
       // Merge stops and recompute places
-      _stops = _mergeStops(_stops);
+      _stops = _mergeStops(_stops,mergeDuration: _smergeDuration);
       _places = _findPlaces(_stops);
 
       // Store to disk
@@ -205,6 +208,10 @@ class MobilityFeatures {
   /// Configure the stop-duration for the stop algorithm
   set stopDuration(Duration value) {
     _stopDuration = value;
+  }
+
+  set mergeDuration(Duration value) {
+    _smergeDuration = value;
   }
 
   /// Configure the stop-radius for the stop algorithm

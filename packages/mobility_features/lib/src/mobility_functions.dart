@@ -83,7 +83,7 @@ List<List<double>> zeroMatrix(int rows, int cols) {
   return new List.generate(rows, (_) => new List<double>.filled(cols, 0.0));
 }
 
-List<Stop> _mergeStops(List<Stop> stops) {
+List<Stop> _mergeStops(List<Stop> stops, { mergeDuration =const Duration(minutes: 15)}) {
   List<Stop> merged = [];
   if (stops.length < 2) return stops;
 
@@ -114,7 +114,13 @@ List<Stop> _mergeStops(List<Stop> stops) {
       /// Otherwise check if we should add it or merge
       else {
         if (stop.placeId != toMerge.last.placeId) {
-          _merge();
+          Duration timeDiff = Duration(
+              milliseconds:
+              stop.arrival.millisecondsSinceEpoch - toMerge.last.departure.millisecondsSinceEpoch);
+
+           if(  timeDiff < mergeDuration ) {
+             _merge();
+           }
         }
         toMerge.add(stop);
       }

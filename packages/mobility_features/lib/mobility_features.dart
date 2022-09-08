@@ -2,6 +2,7 @@ library mobility_features;
 
 import 'dart:async';
 import 'dart:math';
+import 'package:flutter/cupertino.dart';
 import 'package:simple_cluster/simple_cluster.dart';
 import 'package:stats/stats.dart';
 import 'dart:core';
