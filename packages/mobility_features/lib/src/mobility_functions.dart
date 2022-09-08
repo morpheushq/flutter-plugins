@@ -121,6 +121,9 @@ List<Stop> _mergeStops(List<Stop> stops, { mergeDuration =const Duration(minutes
            if(  timeDiff < mergeDuration ) {
              _merge();
            }
+           else{
+             toMerge = [];
+           }
         }
         toMerge.add(stop);
       }
