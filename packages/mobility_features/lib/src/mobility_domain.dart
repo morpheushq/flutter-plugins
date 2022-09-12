@@ -101,7 +101,7 @@ class LocationSample implements _Serializable, _Geospatial, _Timestamped {
     /// Parse, i.e. perform type check
     GeoLocation pos = GeoLocation.fromJson(json[_GEO_LOCATION]);
     int millis = int.parse(json[_DATETIME]);
-    DateTime dt = DateTime.fromMillisecondsSinceEpoch(millis);
+    DateTime dt = DateTime.fromMillisecondsSinceEpoch(millis).toUtc();
     return LocationSample(pos, dt);
   }
 
@@ -192,8 +192,15 @@ class Stop implements _Serializable, _Geospatial, _Timestamped {
   factory Stop._fromJson(Map<String, dynamic> json) {
     return Stop._(
         GeoLocation.fromJson(json[_GEO_LOCATION]),
-        DateTime.fromMillisecondsSinceEpoch(json[_ARRIVAL]),
-        DateTime.fromMillisecondsSinceEpoch(json[_DEPARTURE]),
+        DateTime.fromMillisecondsSinceEpoch(json[_ARRIVAL]).toUtc(),
+        DateTime.fromMillisecondsSinceEpoch(json[_DEPARTURE]).toUtc(),
+        placeId: json[_PLACE_ID]);
+  }
+  factory Stop.fromJson(Map<String, dynamic> json) {
+    return Stop._(
+        GeoLocation.fromJson(json[_GEO_LOCATION]),
+        DateTime.fromMillisecondsSinceEpoch(json[_ARRIVAL]).toUtc(),
+        DateTime.fromMillisecondsSinceEpoch(json[_DEPARTURE]).toUtc(),
         placeId: json[_PLACE_ID]);
   }
 
