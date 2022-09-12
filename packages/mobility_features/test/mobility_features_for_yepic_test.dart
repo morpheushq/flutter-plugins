@@ -8,7 +8,7 @@ import 'dart:convert';
 import 'package:gpx/gpx.dart';
 part 'test_utils.dart';
 
-void main()  {
+void main()   {
 
 
   List<LocationSample> loadDataSet( String fname) {
@@ -37,8 +37,7 @@ void main()  {
     return samples;
   }
 
-
-  test('verify correct stops halifax old trafford', () async {
+  Future<void> verify(String name, int expected ) async{
 
     List<LocationSample> samples = loadDataSet('halifax_old_trafford.gpx');
     StreamController<LocationSample> controller =
@@ -65,88 +64,38 @@ void main()  {
       print('-' * 50);
 
 
-    },count: 7));
+    },count: expected));
 
 
     for (LocationSample s in samples) {
       controller.add(s);
     }
     controller.close();
+
+  }
+
+
+
+  test('verify correct stops halifax old trafford', () async {
+
+     await verify('halifax_old_trafford.gpx', 7);
+
+
   });
   test('verify correct stops halifax 5th sept', () async {
 
-    List<LocationSample> samples = loadDataSet('Steven_Gaunt-5thsept.gpx');
-    StreamController<LocationSample> controller =
-    StreamController.broadcast();
-    MobilityFeatures().stopDuration = Duration(minutes: 15);
-    MobilityFeatures().placeRadius = 50.0;
-    MobilityFeatures().stopRadius = 50.0;
-    MobilityFeatures().mergeDuration= Duration(minutes: 5);
-    // MobilityFeatures()..applyMerge=false;
-    // MobilityFeatures().debug=true;
-    await MobilityFeatures().startListening(controller.stream);
+    await verify('Steven_Gaunt-5thsept.gpx', 5);
 
-    Stream<MobilityContext> mobilityStream = MobilityFeatures().contextStream;
-    mobilityStream.listen( expectAsync1 ((event) {
-      print('-' * 50);
-      print(
-          "Mobility Context Received: ${event.toJson()}");
-
-      print("STOPS");
-      // print(event.stops.toString());
-      for (Stop stop in event.stops) {
-        print(stop.toString());
-      }
-      print('-' * 50);
-
-
-    },count: 5));
-
-
-    for (LocationSample s in samples) {
-      controller.add(s);
-    }
-    controller.close();
   });
 
 
 
-  test('verify correct stops buxton old trafford', () async {
+  test('verify correct stops buxton old trafford', ()  async{
 
     GeoLocation loc = GeoLocation(53.46295872135, -2.29102925835);
     GeoLocation loc2 = GeoLocation(53.4634913388, -2.2905782517);
     print("distance ${Distance.fromGeospatial(loc, loc2)}") ;
-    List<LocationSample> samples = loadDataSet('Steven_Gaunt-buxt-ot.gpx');
-    StreamController<LocationSample> controller =
-    StreamController.broadcast();
-    MobilityFeatures().stopDuration = Duration(minutes: 15);
-    MobilityFeatures().placeRadius = 50.0;
-    MobilityFeatures().stopRadius = 15.0;
-    MobilityFeatures().mergeDuration = Duration(minutes: 5);
-     // MobilityFeatures()..applyMerge=false;
-    // MobilityFeatures().debug=true;
-    await MobilityFeatures().startListening(controller.stream);
+    await  verify('Steven_Gaunt-buxt-ot.gpx', 6);
 
-    Stream<MobilityContext> mobilityStream = MobilityFeatures().contextStream;
-    mobilityStream.listen( expectAsync1 ((event) {
-      print('-' * 50);
-      print(
-          "Mobility Context Received: ${event.toJson()}");
-
-      print("STOPS");
-      // print(event.stops.toString());
-      for (Stop stop in event.stops) {
-        print(stop.toString());
-      }
-      print('-' * 50);
-
-
-    },count: 15));
-
-
-    for (LocationSample s in samples) {
-      controller.add(s);
-    }
-    controller.close();
   });
 }

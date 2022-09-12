@@ -13,7 +13,7 @@ dependencies:
   simple_cluster: ^0.3.0
   stats: ^2.0.0
   path_provider: ^2.0.2
-
+  gpx: ^2.2.0
 dev_dependencies:
   flutter_test:
     sdk: flutter
