@@ -16,7 +16,7 @@ void main()   {
 
   setUp(() async {
    controller =
-    StreamController.broadcast(sync: true);
+    StreamController.broadcast();
 
   });
 
@@ -28,8 +28,10 @@ void main()   {
 
     File stops = new File('test/testdata/stops.json');
     File moves = new File('test/testdata/moves.json');
+    File samplesFile = new File('test/testdata/location_samples.json');
     stops.writeAsString('');
     moves.writeAsString('');
+    samplesFile.writeAsString('');
     String datasetPath = 'test/testdata/${fname}';
     File f = new File('$datasetPath');
     String content = f.readAsStringSync();
@@ -50,10 +52,16 @@ void main()   {
     return samples;
   }
 
+  Future<int> delay() async {
+    await Future.delayed(const Duration(seconds: 5));
+    return 1;
+  }
+
+
   Future<void> verify(String name, int expected ,  List<Stop> expectedStops) async{
 
-    List<LocationSample> samples = loadDataSet('halifax_old_trafford.gpx');
-
+    List<LocationSample> samples = loadDataSet(name);
+    MobilityFeatures().stopListening();
     MobilityFeatures().stopDuration = Duration(minutes: 15);
     MobilityFeatures().placeRadius = 50.0;
     MobilityFeatures().stopRadius = 50.0;
@@ -77,19 +85,20 @@ void main()   {
       for (Stop stop in event.stops) {
         
         print(stop.toString());
-        print(stop.arrival.millisecondsSinceEpoch);
-        print(stop.departure.millisecondsSinceEpoch);
+
         expect(stop.arrival.toString().substring(0,16) , anyOf(    expectedStops.map((val) => val.arrival.toString().substring(0,16)).toList()) );
         expect(stop.departure.toString().substring(0,16) , anyOf(    expectedStops.map((val) => val.departure.toString().substring(0,16)).toList()) );
       }
 
+
+        // completion(event.stops.length==expected);
 
       print('-' * 50);
 
       // expect(event, value);
 
 
-    },count: expected,  max: -1,id:name));
+    }, count: expected, max: -1,id:name));
     // expectLater('2022-08-22 18:15', '2022-08-22 18:15');
     hcode =subscription.hashCode;
     for (LocationSample s in samples) {
@@ -97,11 +106,11 @@ void main()   {
     }
 
 
+
   }
 
 
-
-  test('verify correct stops halifax old trafford', () async {
+  test('verify correct stops halifax old trafford', ()  {
 
  var jsonTest = '[{"geo_location":{"latitude":53.7350898824,"longitude":-1.881882068},"place_id":0,"arrival":1661149756420,"departure":1661155662081},'
       '{"geo_location":{"latitude":53.7350898824,"longitude":-1.881882068},"place_id":0,"arrival":1661156012000,"departure":1661166796959},'
@@ -123,21 +132,21 @@ void main()   {
     }
 
 
-     await verify('halifax_old_trafford.gpx', 5,_stops);
+
+     return  Future(() async {
+       await verify('halifax_old_trafford.gpx', 6, _stops);
+     }).whenComplete(() => print("compsfdfdf"));
 
 
   });
-  test('verify correct stops halifax 5th sept', () async {
+  test('verify correct stops halifax 5th sept', ()  {
 
-    var jsonTest = '[ {"geo_location":{"latitude":53.7350898824,"longitude":-1.881882068},"place_id":0,"arrival":1661149756420,"departure":1661155662081},'
-        '{"geo_location":{"latitude":53.7350898824,"longitude":-1.881882068},"place_id":0,"arrival":1661156012000,"departure":1661166796959},'
-        '{"geo_location":{"latitude":53.705293527600006,"longitude":-1.9141357615999999},"place_id":1,"arrival":1661167562000,"departure":1661172157553},'
-        '{"geo_location":{"latitude":53.7350898824,"longitude":-1.881882068},"place_id":0,"arrival":1661172728998,"departure":1661175769787},'
-        '{"geo_location":{"latitude":53.7350898824,"longitude":-1.881882068},"place_id":0,"arrival":1661175772993,"departure":1661182449635},'
-        '{"geo_location":{"latitude":53.7351042498,"longitude":-1.8818857055},"place_id":0,"arrival":1661182508232,"departure":1661184615817},'
-
-        '{"geo_location":{"latitude":53.735097066099996,"longitude":-1.8818838867499998},"place_id":0,"arrival":1661172728998,"departure":1661184615817},'
-        '{"geo_location":{"latitude":53.463130450899996,"longitude":-2.29108523105},"place_id":2,"arrival":1661192151359,"departure":1661201846111}]';
+    var jsonTest = '[ '
+    '{"geo_location":{"latitude":53.7350905734,"longitude":-1.8818817308},"place_id":0,"arrival":1662354899406,"departure":1662356935053},'
+        '{"geo_location":{"latitude":53.7050630001,"longitude":-1.9143158481},"place_id":0,"arrival":1662357660999,"departure":1662362354576},'
+        '{"geo_location":{"latitude":53.7350247,"longitude":-1.8819064},"place_id":1,"arrival":1662362956024,"departure":1662377706102},'
+        '{"geo_location":{"latitude":53.7350921243,"longitude":-1.881882521},"place_id":1,"arrival":1662381678000,"departure":1662393538035},'
+        '{"geo_location":{"latitude":53.7070989686,"longitude":-1.912036389},"place_id":2,"arrival":1662394984140,"departure":1662399701793}]';
 
     final List<dynamic> dataList= jsonDecode(jsonTest);
 
@@ -149,20 +158,35 @@ void main()   {
 
 
     }
-
-    await verify('Steven_Gaunt-5thsept.gpx', 5,_stops);
+     return  Future(() async {
+      await verify('Steven_Gaunt-5thsept.gpx', 4, _stops);
+    }).whenComplete(() => print("compsfdfdf"));
 
   });
 
 
 
-  test('verify correct stops buxton old trafford', ()async  {
+  test('verify correct stops buxton old trafford', ()  {
 
-    GeoLocation loc = GeoLocation(53.46295872135, -2.29102925835);
-    GeoLocation loc2 = GeoLocation(53.4634913388, -2.2905782517);
-    print("distance ${Distance.fromGeospatial(loc, loc2)}") ;
+    var jsonTest = '['
+        '{"geo_location":{"latitude":53.251253467599994,"longitude":-1.93711104575},"place_id":0,"arrival":1662271468034,"departure":1662281928664},'
+    '{"geo_location":{"latitude":53.2580651462,"longitude":-1.9166655869},"place_id":1,"arrival":1662283599000,"departure":1662285040116},'
+    '{"geo_location":{"latitude":53.2512660139,"longitude":-1.9371352717},"place_id":0,"arrival":1662286111071,"departure":1662293310339},'
+    '{"geo_location":{"latitude":53.46295872135,"longitude":-2.29102925835},"place_id":2,"arrival":1662301929724,"departure":1662308335002},'
+    '{"geo_location":{"latitude":53.4634913388,"longitude":-2.2905782517},"place_id":3,"arrival":1662308335002,"departure":1662312403923}]';
+
+    final List<dynamic> dataList= jsonDecode(jsonTest);
     List<Stop> _stops = [];
-    // await verify('Steven_Gaunt-buxt-ot.gpx', 6,_stops);
+    for (var data in dataList) {
+
+      Stop stop =  Stop.fromJson(data);
+      _stops.add(stop);
+
+
+    }
+    return  Future(() async {
+      await verify('Steven_Gaunt-buxt-ot.gpx', 5, _stops);
+    }).whenComplete(() => print("compsfdfdf"));
 
   });
 }
