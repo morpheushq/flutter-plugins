@@ -14,7 +14,7 @@ class MobilityFeatures {
   List<Move> _moves = [];
   List<Place> _places = [];
   List<LocationSample> _cluster = [], _buffer = [], _samples = [];
-  int _saveEvery = 10;
+  int _saveEvery = 1;
   bool debug = false;
   bool applyMerge = true;
 
@@ -143,6 +143,9 @@ class MobilityFeatures {
     _buffer = [];
   }
 
+  void reset() {
+    _clearEverything();
+  }
   /// Save a sample to the buffer and store samples on disk if buffer overflows
   void _addToBuffer(LocationSample sample) {
     _buffer.add(sample);
