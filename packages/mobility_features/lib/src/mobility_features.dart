@@ -229,6 +229,27 @@ class MobilityFeatures {
     _placeRadius = value;
   }
 
+
+  Stop? currentStop(LocationSample currentLocation ) {
+    Stop? stop;
+    GeoLocation centroid = _computeCentroid(_cluster);
+    _print('----> currentStop current Lcoation : ${currentLocation}');
+     _print('----> currentStop _cluster : ${_cluster.length}');
+     _print('----> currentStop centroid : ${centroid}');
+      // If the new data point is far away from cluster, make stop
+      double distance = Distance.fromGeospatial(centroid, currentLocation);
+      if (distance <= _stopRadius) {
+
+        stop  =  Stop._fromLocationSamples(_cluster);
+          _print('----> currentStop is iwthin at ${distance} centroid : ${stop}');
+
+      }
+      else{
+    _print('----> currentStop is outside centroid centroid : ${distance}');
+    }
+    return stop;
+
+  }
   Future<_MobilitySerializer<LocationSample>>
       get _locationSampleSerializer async {
     if (_serializerSamples == null) {

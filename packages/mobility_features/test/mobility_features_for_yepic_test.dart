@@ -75,6 +75,8 @@ void main()   {
         StreamController.broadcast();
 
 
+
+
     Stream<MobilityContext> mobilityStream = MobilityFeatures().contextStream;
 
 
@@ -111,6 +113,11 @@ void main()   {
 
 
       await delay(10);
+
+    Stop? stop = MobilityFeatures().currentStop(samples.last);
+
+
+      print(stop!.toString());
 
     // await MobilityFeatures().stopListening();
     return subscription;
